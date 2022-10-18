@@ -20,3 +20,4 @@ def read_url(url):
 			fail_count += 1
 			print("Failed to read " + url + "(" + str(fail_count) + ")")
 	return ""
+
