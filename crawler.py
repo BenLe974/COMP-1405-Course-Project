@@ -44,6 +44,7 @@ def crawl(seed): #seed is url that you start from
                 filein.write(link + "\n")
                 filein.close()
         totalpages += 1
+         
     return totalpages
 
 print(crawl("http://people.scs.carleton.ca/~davidmckenney/tinyfruits/N-0.html"))
