@@ -66,13 +66,22 @@ def get_idf(word):
     return idf
 
 def get_tf(url,word):
+    if webdev.read_url(url) == "":
+        return 0
     tf = 0
     title = parse_functions.find_title(url)
     filepath = os.path.join("search_results",title)
-    if os.path.exists(os.path.join(filepath,word+".txt")):
-        freq = open(os.path.join(filepath,word+".txt"))
-        tf = int(freq.read().strip())
-        freq.close()
+    if os.path.isdir(filepath) and os.path.exists(os.path.join(filepath,"page_address.txt")):
+        filein = open(os.path.join(filepath,"page_address.txt"),"r")
+        if filein.read().strip() == url:
+            if os.path.exists(os.path.join(filepath,word+".txt")):
+                freq = open(os.path.join(filepath,word+".txt"))
+                tf = int(freq.read().strip())
+                freq.close()
+        else:
+            return 0    
+    else:
+        return 0
     if tf == 0:
         return 0
     return tf
@@ -82,4 +91,4 @@ def get_tf_idf(url,word):
     tf = get_tf(url,word)
     tf_idf = math.log2(1+tf)*idf
     return tf_idf
-print(get_tf_idf("http://people.scs.carleton.ca/~davidmckenney/tinyfruits/N-9.html","apricot"))
+print(get_tf("http://people.scs.carleton.ca/~davidmckenney/tinyfruits/N-1.html","apricot"))
