@@ -78,11 +78,11 @@ def get_tf(url,word):
                 freq = open(os.path.join(filepath,word+".txt"))
                 tf = int(freq.read().strip())
                 freq.close()
+            else:
+                return 0
         else:
             return 0    
     else:
-        return 0
-    if tf == 0:
         return 0
     return tf
 
