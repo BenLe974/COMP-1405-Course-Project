@@ -89,9 +89,11 @@ def get_tf(url,word):
     return tf
 
 def get_tf_idf(url,word):
-    idf = get_idf(word)
+    words = open("words_found.txt","r")
+    idfs = open("idf.txt","r")
+    search = words.read().strip().split()
+    if word in search:
+        idf = float(idfs.read().strip().split()[search.index(word)])
     tf = get_tf(url,word)
     tf_idf = math.log2(1+tf)*idf
     return tf_idf
-
-

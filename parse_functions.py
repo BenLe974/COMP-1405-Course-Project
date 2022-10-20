@@ -15,7 +15,10 @@ def page_contents(url):
     body = split2[0].split()
     bodydict = {}
     for word in body:
-        bodydict[word] = body.count(word)
+        if word not in bodydict:
+            bodydict[word] = body.count(word)
+        else:
+            continue
     return bodydict
 
 def base_address(url):#finding the base url to which we can add references onto

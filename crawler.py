@@ -3,6 +3,7 @@ import os_functions
 import os
 import webdev
 import searchdata
+import time
 
 def crawl(seed): #seed is url that you start from
     if webdev.read_url(seed) == "":
@@ -53,6 +54,14 @@ def crawl(seed): #seed is url that you start from
         os_functions.file_gen(filepath,"doc_length.txt",length)
         totalpages += 1
     
+    found = open("words_found.txt","w")
+    idfs = open("idf.txt","w")
+    for i in range(len(unique)):
+        found.write(unique[i] + "\n")
+        idfs.write(str(searchdata.get_idf(unique[i]))+"\n")
+    found.close()
+    idfs.close()
+    
 
     titles = os.listdir("search_results")
     for name in titles:
@@ -67,11 +76,10 @@ def crawl(seed): #seed is url that you start from
             page.close()
             fileopen.close()
 
-    os_functions.file_gen("search_results","words_found.txt",unique[0])
-    found = open(os.path.join("search_results","words_found.txt"),"a")
-    for i in range(1,len(unique)-1):
-        found.write(unique[i] + "\n")
-    found.close()
+    
     return totalpages
 
-print(crawl("http://people.scs.carleton.ca/~davidmckenney/tinyfruits/N-0.html"))
+start = time.time()
+print(crawl("http://people.scs.carleton.ca/~davidmckenney/fruits/N-0.html"))
+end = time.time()
+print(end-start)
