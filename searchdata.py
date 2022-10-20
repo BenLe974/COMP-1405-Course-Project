@@ -75,9 +75,11 @@ def get_tf(url,word):
         filein = open(os.path.join(filepath,"page_address.txt"),"r")
         if filein.read().strip() == url:
             if os.path.exists(os.path.join(filepath,word+".txt")):
-                freq = open(os.path.join(filepath,word+".txt"))
-                tf = int(freq.read().strip())
+                freq = open(os.path.join(filepath,word+".txt"),"r")
+                length = open(os.path.join(filepath,"doc_length.txt"),"r")
+                tf = int(freq.read().strip())/int(length.read().strip())
                 freq.close()
+                length.close()
             else:
                 return 0
         else:
@@ -91,4 +93,5 @@ def get_tf_idf(url,word):
     tf = get_tf(url,word)
     tf_idf = math.log2(1+tf)*idf
     return tf_idf
-print(get_tf("http://people.scs.carleton.ca/~davidmckenney/tinyfruits/N-1.html","apricot"))
+
+
