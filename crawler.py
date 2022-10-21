@@ -3,6 +3,7 @@ import os_functions
 import os
 import webdev
 import searchdata
+import matmult
 import time
 
 def crawl(seed): #seed is url that you start from
@@ -76,10 +77,44 @@ def crawl(seed): #seed is url that you start from
             page.close()
             fileopen.close()
 
-    
+    probmatrix = []
+    index = 0
+    alpha = 0.1
+    for title in titles:
+        address = open(os.path.join("search_results",title,"page_address.txt"),"r")
+        link = address.read().strip()
+        address.close()
+        row = []
+        count = 0
+        for i in titles:
+            outgoing = open(os.path.join("search_results",i,"outgoing_links.txt"),"r")
+            if link in outgoing.read().strip().split():
+                row.append(1)
+                count += 1
+            else:
+                row.append(0)
+        for i in range(totalpages):
+            row[i] = (row[i]/count)*(1-alpha)+(alpha/totalpages)
+
+        probmatrix.append(row)
+        outgoing.close()
+        index +=1
+    t = []
+    for i in range(totalpages):
+        t.append(1/totalpages)
+    tprime = matmult.mult_matrix(t,probmatrix)
+    euclidist = float(matmult.euclidean_dist(t,tprime))
+    while euclidist > 0.0001:
+        t = tprime
+        tprime = matmult.mult_matrix(t,probmatrix)
+        euclidist = float(matmult.euclidean_dist(t,tprime))
+    t = tprime
+
+    for i in range(totalpages):
+        os_functions.file_gen(os.path.join("search_results",titles[i]),"page_rank.txt",t[i])
     return totalpages
 
 start = time.time()
-print(crawl("http://people.scs.carleton.ca/~davidmckenney/fruits/N-0.html"))
+print(crawl("http://people.scs.carleton.ca/~davidmckenney/tinyfruits/N-0.html"))
 end = time.time()
 print(end-start)
