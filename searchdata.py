@@ -48,8 +48,16 @@ def get_incoming_links(url):
         return None
 
 def get_page_rank(url):
-    #leave for later
-    return -1
+    if webdev.read_url(url) == "":
+        return -1
+    filepath = os.path.join("search_results", parse_functions.find_title(url))
+    if os.path.exists(filepath) and os.path.isdir(filepath):
+        filein = open(os.path.join(filepath, "page_rank.txt"),"r")
+        pagerank = float(filein.read().strip())
+        filein.close()
+    else:
+        return -1
+    return pagerank
 
 def get_idf(word):
     titles = os.listdir("search_results")

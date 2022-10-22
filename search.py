@@ -22,7 +22,10 @@ def search(phrase,boost):
         for word in query:
             tf = query.count(word)/len(query)
             idf = searchdata.get_idf(word)
-            qvector[word] = math.log2(1+tf)*idf
+            if idf < 0:
+                continue
+            else:
+                qvector[word] = math.log2(1+tf)*idf
         cosine = []
         denq = 0
         for searchword in qvector:
@@ -39,6 +42,8 @@ def search(phrase,boost):
                     dend += float(tfidf[title][searchword])*float(tfidf[title][searchword])
             if num == 0:
                 cosine.append(str(0) + " " +address)
+            elif boost == "True":
+                cosine.append(str(num*searchdata.get_page_rank(address)/(math.sqrt(denq)*math.sqrt(dend))) + " " + address)
             else:
                 cosine.append(str(num/(math.sqrt(denq)*math.sqrt(dend))) + " " + address)
         sortedcosine = []
@@ -54,6 +59,6 @@ def search(phrase,boost):
         return print("you have not put in a proper value for boost")
 
 start = time.time()
-print(search("apple peach apricot","True"))
+print(search("apple peach apricot","False"))
 end = time.time()
 print(end-start)

@@ -1,13 +1,5 @@
-apple
-apricot
 peach
-coconut
 pear
-lime
-orange
+coconut
+apple
 banana
-papaya
-cherry
-kiwi
-blueberry
-fig
