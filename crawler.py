@@ -4,7 +4,6 @@ import os
 import webdev
 import searchdata
 import matmult
-import time
 import math
 
 def crawl(seed): #seed is url that you start from
@@ -21,19 +20,10 @@ def crawl(seed): #seed is url that you start from
     totalpages = 0
     queue = parse_functions.reference_gen(seed)
     queue.append(seed)
-    #start = time.time()
-    #for i in queue:
-        #ref = parse_functions.reference_gen(i)
-        #for j in ref:
-            #if j not in queue:
-                #queue.append(j)
-    #end = time.time()
-    #print(end-start)
+  
                 
-    start = time.time()
+    
     unique = []
-    #while len(queue) > 0:
-        #url = queue.pop(0)
     for i in queue:
         url = i
         title = parse_functions.find_title(url)
@@ -58,8 +48,7 @@ def crawl(seed): #seed is url that you start from
                 queue.append(link)
         filein.close()
         totalpages += 1
-    end = time.time()
-    print(end-start)
+   
 
     found = open("words_found.txt","w")
     idfs = open("idf.txt","w")
@@ -69,7 +58,7 @@ def crawl(seed): #seed is url that you start from
     found.close()
     idfs.close()
     
-    start = time.time()
+   
     titles = os.listdir("search_results")
     filein = open("idf.txt","r")
     idfs = filein.read().strip().split()
@@ -86,12 +75,11 @@ def crawl(seed): #seed is url that you start from
             else:
                 tf = 0
             fileopen.write(str(math.log2(1+ tf)*float(idfs[unique.index(word)]))+"\n")  
-            #fileopen.write(str(searchdata.get_tf_idf(address,word))+"\n")
+            
         fileopen.close()
-    end = time.time()
-    print(end-start)
+   
     
-    start = time.time()
+    
     probmatrix = []
     index = 0
     alpha = 0.1
@@ -115,8 +103,6 @@ def crawl(seed): #seed is url that you start from
         outgoing.close()
         index +=1
     t = [1/totalpages] * totalpages
-    #for i in range(totalpages):
-        #t.append(1/totalpages)
     tprime = matmult.mult_matrix(t,probmatrix)
     euclidist = float(matmult.euclidean_dist(t,tprime))
     while euclidist > 0.0001:
@@ -127,11 +113,5 @@ def crawl(seed): #seed is url that you start from
 
     for i in range(totalpages):
         os_functions.file_gen(os.path.join("search_results",titles[i]),"page_rank.txt",t[i])
-    end = time.time()
-    print(end-start)
     return totalpages
 
-start = time.time()
-print(crawl("http://people.scs.carleton.ca/~davidmckenney/fruits2/N-0.html"))
-end = time.time()
-print(end-start)

@@ -14,7 +14,7 @@ def get_outgoing_links(url):
         if filein.read().strip() == url and os.path.exists(os.path.join(filepath,"outgoing_links.txt")):
             filein.close()
             references = open(os.path.join(filepath,"outgoing_links.txt"),"r")
-            outgoing = references.read().strip()
+            outgoing = references.read().strip().split()
             references.close()
             return outgoing
         else:
@@ -92,6 +92,8 @@ def get_tf_idf(url,word):
     search = words.read().strip().split()
     if word in search:
         idf = float(idfs.read().strip().split()[search.index(word)])
+    else:
+        idf = math.log2((len(os.listdir("search_results"))/1))
     tf = get_tf(url,word)
     tf_idf = math.log2(1+tf)*idf
     return tf_idf
