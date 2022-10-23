@@ -132,6 +132,6 @@ def crawl(seed): #seed is url that you start from
     return totalpages
 
 start = time.time()
-print(crawl("http://people.scs.carleton.ca/~davidmckenney/fruits/N-0.html"))
+print(crawl("http://people.scs.carleton.ca/~davidmckenney/fruits2/N-0.html"))
 end = time.time()
 print(end-start)
