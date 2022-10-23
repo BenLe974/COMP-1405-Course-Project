@@ -5,6 +5,7 @@ import webdev
 import searchdata
 import matmult
 import time
+import math
 
 def crawl(seed): #seed is url that you start from
     if webdev.read_url(seed) == "":
@@ -70,14 +71,22 @@ def crawl(seed): #seed is url that you start from
     
     start = time.time()
     titles = os.listdir("search_results")
+    filein = open("idf.txt","r")
+    idfs = filein.read().strip().split()
+    filein.close()
     for name in titles:
         filepath = os.path.join("search_results",name)
         fileopen = open(os.path.join(filepath,"tfidf.txt"),"w")
-        page = open(os.path.join(filepath,"page_address.txt"),"r")
-        address = page.read().strip()
-        page.close()
+        
         for word in unique:
-            fileopen.write(str(searchdata.get_tf_idf(address,word))+"\n")
+            if os.path.exists(os.path.join(filepath, word + ".txt")):
+                page = open(os.path.join(filepath, word + ".txt"),"r")
+                tf = float(page.read().strip())
+                page.close()
+            else:
+                tf = 0
+            fileopen.write(str(math.log2(1+ tf)*float(idfs[unique.index(word)]))+"\n")  
+            #fileopen.write(str(searchdata.get_tf_idf(address,word))+"\n")
         fileopen.close()
     end = time.time()
     print(end-start)
