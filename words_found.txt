@@ -1,5 +1,5 @@
 peach
 pear
-coconut
-apple
 banana
+apple
+coconut

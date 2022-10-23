@@ -10,8 +10,12 @@ def search(phrase,boost):
         crawl = open("words_found.txt","r")
         titles = os.listdir("search_results")
         keys = crawl.read().strip().split()
+        crawl.close()
         for title in titles:
             tfidf[title] = {}
+            #filein = open(os.path.join("search_results",title,"page_address.txt"),"r")
+            #address = filein.read().strip()
+            #filein.close()
             pageweights = open(os.path.join("search_results",title,"tfidf.txt"),"r")
             values = pageweights.read().strip().split()
             n=0
@@ -34,6 +38,9 @@ def search(phrase,boost):
             filein = open(os.path.join("search_results",title,"page_address.txt"),"r")
             address = filein.read().strip()
             filein.close()
+            filein = open(os.path.join("search_results",title,"page_rank.txt"),"r")
+            pagerank = float(filein.read().strip())
+            filein.close()
             num = 0
             dend = 0
             for searchword in qvector:
@@ -41,24 +48,24 @@ def search(phrase,boost):
                     num += float(qvector[searchword])*float(tfidf[title][searchword])
                     dend += float(tfidf[title][searchword])*float(tfidf[title][searchword])
             if num == 0:
-                cosine.append(str(0) + " " +address)
+                cosine.append({"url": address,  "title": title,"score" :0})
             elif boost == "True":
-                cosine.append(str(num*searchdata.get_page_rank(address)/(math.sqrt(denq)*math.sqrt(dend))) + " " + address)
+                cosine.append({"url":address, "title": title, "score": num*pagerank/(math.sqrt(denq)*math.sqrt(dend))})
             else:
-                cosine.append(str(num/(math.sqrt(denq)*math.sqrt(dend))) + " " + address)
+                cosine.append({"url":address, "title": title, "score": num/(math.sqrt(denq)*math.sqrt(dend))})
         sortedcosine = []
         while len(cosine) > 0:
             largest = cosine[0]
             for i in range(len(cosine)):
-                if cosine[i] > largest:
+                if cosine[i]["score"] > largest["score"]:
                     largest = cosine[i]
             sortedcosine.append(largest)
             cosine.remove(largest)
-        return sortedcosine[0:9]
+        return sortedcosine[0:10]
     else:
         return print("you have not put in a proper value for boost")
 
 start = time.time()
-print(search("apple peach apricot","False"))
+print(search("tomato peach tomato pear banana tomato peach tomato","True"))
 end = time.time()
 print(end-start)

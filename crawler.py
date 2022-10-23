@@ -20,41 +20,46 @@ def crawl(seed): #seed is url that you start from
     totalpages = 0
     queue = parse_functions.reference_gen(seed)
     queue.append(seed)
-    for i in queue:
-        ref = parse_functions.reference_gen(i)
-        for j in ref:
-            if j in queue:
-                continue
-            else:
-                queue.append(j)
-    
+    #start = time.time()
+    #for i in queue:
+        #ref = parse_functions.reference_gen(i)
+        #for j in ref:
+            #if j not in queue:
+                #queue.append(j)
+    #end = time.time()
+    #print(end-start)
+                
+    start = time.time()
     unique = []
-    while len(queue) > 0:
-        url = queue.pop()
+    #while len(queue) > 0:
+        #url = queue.pop(0)
+    for i in queue:
+        url = i
         title = parse_functions.find_title(url)
         contents = parse_functions.page_contents(url)
         filepath = os.path.join("search_results",title)
         os_functions.directory_gen(filepath)
         os_functions.file_gen(filepath,"page_address.txt",url)
-        for key in contents:
-            os_functions.file_gen(filepath,key + ".txt",contents[key])
-            if key not in unique:
-                unique.append(key)
-        references = parse_functions.reference_gen(url)
-        
-        for link in references:
-            if not os.path.exists(os.path.join(filepath,"outgoing_links.txt")):
-                os_functions.file_gen(filepath,"outgoing_links.txt",link)
-            else:
-                filein = open(os.path.join(filepath,"outgoing_links.txt"),"a")
-                filein.write(link + "\n")
-                filein.close()
         length = 0
         for key in contents:
             length += contents[key]
         os_functions.file_gen(filepath,"doc_length.txt",length)
+        for key in contents:
+            os_functions.file_gen(filepath,key + ".txt",contents[key]/length)
+            if key not in unique:
+                unique.append(key)
+        references = parse_functions.reference_gen(url)
+        
+        filein = open(os.path.join(filepath,"outgoing_links.txt"),"w")
+        for link in references:  
+            filein.write(link + "\n")
+            if link not in queue:
+                queue.append(link)
+        filein.close()
         totalpages += 1
-    
+    end = time.time()
+    print(end-start)
+
     found = open("words_found.txt","w")
     idfs = open("idf.txt","w")
     for i in range(len(unique)):
@@ -63,20 +68,21 @@ def crawl(seed): #seed is url that you start from
     found.close()
     idfs.close()
     
-
+    start = time.time()
     titles = os.listdir("search_results")
     for name in titles:
         filepath = os.path.join("search_results",name)
-        os_functions.file_gen(filepath,"tfidf.txt","")
-        clear = open(os.path.join(filepath,"tfidf.txt"),"w")
-        clear.close()
+        fileopen = open(os.path.join(filepath,"tfidf.txt"),"w")
+        page = open(os.path.join(filepath,"page_address.txt"),"r")
+        address = page.read().strip()
+        page.close()
         for word in unique:
-            fileopen = open(os.path.join(filepath,"tfidf.txt"),"a")
-            page = open(os.path.join(filepath,"page_address.txt"),"r")
-            fileopen.write(str(searchdata.get_tf_idf(page.read().strip(),word))+"\n")
-            page.close()
-            fileopen.close()
-
+            fileopen.write(str(searchdata.get_tf_idf(address,word))+"\n")
+        fileopen.close()
+    end = time.time()
+    print(end-start)
+    
+    start = time.time()
     probmatrix = []
     index = 0
     alpha = 0.1
@@ -99,9 +105,9 @@ def crawl(seed): #seed is url that you start from
         probmatrix.append(row)
         outgoing.close()
         index +=1
-    t = []
-    for i in range(totalpages):
-        t.append(1/totalpages)
+    t = [1/totalpages] * totalpages
+    #for i in range(totalpages):
+        #t.append(1/totalpages)
     tprime = matmult.mult_matrix(t,probmatrix)
     euclidist = float(matmult.euclidean_dist(t,tprime))
     while euclidist > 0.0001:
@@ -112,6 +118,8 @@ def crawl(seed): #seed is url that you start from
 
     for i in range(totalpages):
         os_functions.file_gen(os.path.join("search_results",titles[i]),"page_rank.txt",t[i])
+    end = time.time()
+    print(end-start)
     return totalpages
 
 start = time.time()

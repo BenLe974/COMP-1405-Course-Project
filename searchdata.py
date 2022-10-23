@@ -76,25 +76,15 @@ def get_idf(word):
 def get_tf(url,word):
     if webdev.read_url(url) == "":
         return 0
-    tf = 0
     title = parse_functions.find_title(url)
     filepath = os.path.join("search_results",title)
-    if os.path.isdir(filepath) and os.path.exists(os.path.join(filepath,"page_address.txt")):
-        filein = open(os.path.join(filepath,"page_address.txt"),"r")
-        if filein.read().strip() == url:
-            if os.path.exists(os.path.join(filepath,word+".txt")):
-                freq = open(os.path.join(filepath,word+".txt"),"r")
-                length = open(os.path.join(filepath,"doc_length.txt"),"r")
-                tf = int(freq.read().strip())/int(length.read().strip())
-                freq.close()
-                length.close()
-            else:
-                return 0
-        else:
-            return 0    
+    if os.path.exists(os.path.join(filepath,word + ".txt")):
+        filein = open(os.path.join(filepath,word + ".txt"),"r")     
+        tf = float(filein.read().strip())
     else:
         return 0
-    return tf
+    return tf        
+          
 
 def get_tf_idf(url,word):
     words = open("words_found.txt","r")
