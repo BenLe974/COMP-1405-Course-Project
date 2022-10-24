@@ -65,7 +65,6 @@ def get_idf(word):
     frequency = 0
     for title in titles:
         filepath = os.path.join("search_results",title)
-        os.listdir(filepath)
         if os.path.exists(os.path.join(filepath, word + ".txt")):
             frequency += 1
     if frequency == 0:

@@ -64,10 +64,10 @@ def search(phrase,boost):
 
 def search_menu():
     choice = ""
-    #seed = input("Please provide a seed link to start the crawl at: ")
-    #print("Please wait for the crawl to finish")
-    #pagecount = crawler.crawl(seed)
-    #print("The crawl visited " + str(pagecount) + " pages")
+    seed = input("Please provide a seed link to start the crawl at: ")
+    print("Please wait for the crawl to finish")
+    pagecount = crawler.crawl(seed)
+    print("The crawl visited " + str(pagecount) + " pages")
     while choice != "q":
         print("")
         print("")
