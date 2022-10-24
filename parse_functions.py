@@ -1,5 +1,4 @@
 import webdev
-url = "http://people.scs.carleton.ca/~davidmckenney/tinyfruits/N-0.html"
 
 def find_title(url): #title finder
     contents = webdev.read_url(url)

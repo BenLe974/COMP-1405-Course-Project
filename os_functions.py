@@ -1,4 +1,3 @@
-from genericpath import isdir
 import os
 
 def directory_check(title):

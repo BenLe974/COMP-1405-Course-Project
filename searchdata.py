@@ -14,7 +14,7 @@ def get_outgoing_links(url):
         if filein.read().strip() == url and os.path.exists(os.path.join(filepath,"outgoing_links.txt")):
             filein.close()
             references = open(os.path.join(filepath,"outgoing_links.txt"),"r")
-            outgoing = references.read().strip()
+            outgoing = references.read().strip().split()
             references.close()
             return outgoing
         else:
@@ -65,7 +65,6 @@ def get_idf(word):
     frequency = 0
     for title in titles:
         filepath = os.path.join("search_results",title)
-        os.listdir(filepath)
         if os.path.exists(os.path.join(filepath, word + ".txt")):
             frequency += 1
     if frequency == 0:
@@ -76,25 +75,15 @@ def get_idf(word):
 def get_tf(url,word):
     if webdev.read_url(url) == "":
         return 0
-    tf = 0
     title = parse_functions.find_title(url)
     filepath = os.path.join("search_results",title)
-    if os.path.isdir(filepath) and os.path.exists(os.path.join(filepath,"page_address.txt")):
-        filein = open(os.path.join(filepath,"page_address.txt"),"r")
-        if filein.read().strip() == url:
-            if os.path.exists(os.path.join(filepath,word+".txt")):
-                freq = open(os.path.join(filepath,word+".txt"),"r")
-                length = open(os.path.join(filepath,"doc_length.txt"),"r")
-                tf = int(freq.read().strip())/int(length.read().strip())
-                freq.close()
-                length.close()
-            else:
-                return 0
-        else:
-            return 0    
+    if os.path.exists(os.path.join(filepath,word + ".txt")):
+        filein = open(os.path.join(filepath,word + ".txt"),"r")     
+        tf = float(filein.read().strip())
     else:
         return 0
-    return tf
+    return tf        
+          
 
 def get_tf_idf(url,word):
     words = open("words_found.txt","r")
@@ -102,6 +91,8 @@ def get_tf_idf(url,word):
     search = words.read().strip().split()
     if word in search:
         idf = float(idfs.read().strip().split()[search.index(word)])
+    else:
+        idf = math.log2((len(os.listdir("search_results"))/1))
     tf = get_tf(url,word)
     tf_idf = math.log2(1+tf)*idf
     return tf_idf
